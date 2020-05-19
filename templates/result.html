@@ -18,6 +18,13 @@
     		justify-content: center;
     		height: 80vh;
     		align-items: center;
+		}
+		.center-div-text{
+    		text-align: center;
+    		display: flex;
+    		justify-content: center;
+    		height: 90vh;
+    		align-items: center;
     	}
     	.padding-nn{
     		padding:10px;
@@ -28,7 +35,7 @@
     		border-radius: 15px;
     		background: #80808052;
     	}
-    	h1{
+    	h1,h3{
     		color:#39FF14;
     	}
     	input{
@@ -68,8 +75,14 @@ margin: 10px;
 <body>
     <h1 class="center-al">Lumos!</h1>
     <div class="center-div-nn flex">
-        <img class="boxglow width-img padding" src="{{data['ori']}}" >
-        <img class="boxglow width-img padding" src="{{data['pro']}}" >
-    </div>
+		<figure>
+			<img class="boxglow width-img padding" src="{{data['ori']}}" >
+			<figcaption><h3>Original</h3></figcaption>
+		</figure>
+		<figure>
+			<img class="boxglow width-img padding" src="{{data['pro']}}" >
+			<figcaption><h3>Enhanced</h3></figcaption>
+		</figure>
+	</div>
 </body>
 </html>

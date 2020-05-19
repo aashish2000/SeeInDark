@@ -1,24 +1,20 @@
-#/mnt/c/Users/aashi/Desktop/Flaskdev/flaskenv/bin/env/python3.7
+# Perform necessary imports
+
 from flask import Flask,render_template,session,redirect,url_for,request
-#from flask_wtf import FlaskForm
-#from wtforms import StringField, TextField, SubmitField
-#from __future__ import print_function, division
 import os
 import torch
-import pandas as pd
 import requests
 import cv2
-#from skimage import io, transform
+
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
 import numpy as np
 torch.set_printoptions(linewidth=120)
-#import cv2
+
 # Ignore warnings
 import json
 import warnings
@@ -28,8 +24,7 @@ from flask import make_response
 from functools import wraps, update_wrapper
 from datetime import datetime
 
-plt.ion()   # interactive mode
-
+# Initialize Flask app
 app = Flask(__name__)
 
 def nocache(view):
@@ -43,6 +38,12 @@ def nocache(view):
         return response
         
     return update_wrapper(no_cache, view)
+
+'''
+Defines Neural Network Architecture
+consisting of 2 convolutional layers and
+2 deconvolutional layers
+'''
 
 class NNetwork(nn.Module):
     def __init__(self):
@@ -68,55 +69,47 @@ class NNetwork(nn.Module):
 
         t = self.deconv2(t)
         t = F.relu(t)
-
-        print("yoyo:",t.shape)
         
         return t
 
-
-fcn = NNetwork().to('cpu')
-fcn.load_state_dict(torch.load('./tiny_final.pt',map_location= torch.device('cpu')))
-
-@app.route('/test', methods=['GET'])
-@nocache
-def test1():
-	return (render_template("result.html",data={"ori":"./static/fileToUpload.jpg","pro":"./static/fileToUpload1.jpg"}))
-
+# Load Saved Model 
+fully_conv_network = NNetwork().to('cpu')
+fully_conv_network.load_state_dict(torch.load('./tiny_final.pt',map_location= torch.device('cpu')))
 
 @app.route('/', methods=['POST','GET'])
 @nocache
 def index():
 	if request.method == 'GET':
 		return render_template('file.html')	
-	returnfile=request.files['fileToUpload']
-	timeval = str(time.time()).replace('.','')
 
-	returnfile.save("./static/"+timeval+".jpg")
+    # Get uploaded image
+	picture_path=request.files['fileToUpload']
+	time_stamp = str(time.time()).replace('.','')
 
+	picture_path.save("./static/"+time_stamp+".jpg")
+	uploaded_image=cv2.imread("./static/"+time_stamp+".jpg")
 
-
-	imgs=cv2.imread("./static/"+timeval+".jpg")
-
-	in_image = np.array(imgs)
-	height,width = in_image.shape[0],in_image.shape[1]
-	in_image = cv2.resize(in_image,(512,512))
-	in_image = np.moveaxis(in_image, -1, 0)
+    # Resize image to dimensions (512,512) and switch channels
+	input_image = np.array(uploaded_image)
+	height,width = input_image.shape[0],input_image.shape[1]
+	input_image = cv2.resize(input_image,(512,512))
+	input_image = np.moveaxis(input_image, -1, 0)
 
 	dark_imgs=[]
-	dark_imgs.append(in_image)
-	out = fcn(torch.as_tensor(dark_imgs).float())
+	dark_imgs.append(input_image)
+
+    # Pass Image as input to the Neural Network
+	out = fully_conv_network(torch.as_tensor(dark_imgs).float())
 	out = out.detach().cpu().numpy()
 
-	out_pr = np.moveaxis(out[0], -1, 0)
-	out_pr = np.moveaxis(out_pr, -1, 0)
-	print(out_pr.shape)
-	print(height,width)
-	out_pr = cv2.resize(out_pr,(width,height))
+    # Resize image to original dimensions
+	output_image = np.moveaxis(out[0], -1, 0)
+	output_image = np.moveaxis(output_image, -1, 0)
+	output_image = cv2.resize(output_image,(width,height))
 
-	cv2.imwrite("./static/"+timeval+"1.jpg",out_pr)
+	cv2.imwrite("./static/"+time_stamp+"1.jpg",output_image)
 
-	# plt.imshow(out_pr.astype('int'))
-	return render_template("result.html",data={"ori":"./static/"+timeval+".jpg","pro":"./static/"+timeval+"1.jpg"})
+	return render_template("result.html",data={"ori":"./static/"+time_stamp+".jpg","pro":"./static/"+time_stamp+"1.jpg"})
 
 
 @app.after_request
@@ -132,8 +125,5 @@ def add_header(r):
     return r
 
 
-	
-
-#if __name__=='__main__':
-app.run("0.0.0.0",5001,debug=True)
+#app.run("0.0.0.0",5001,debug=True)
 
