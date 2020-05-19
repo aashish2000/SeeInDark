@@ -51,7 +51,7 @@ flask run
 ![](./assets/home.png)
 
 - Result Page:
-![](./assets/result.png)
+![](./assets/results.png)
 
 ## References
 - <https://github.com/ninetf135246/pytorch-Learning-to-See-in-the-Dark>
