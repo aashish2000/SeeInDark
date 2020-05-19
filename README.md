@@ -11,8 +11,9 @@ This project focuses on Low Light Photo Enhancement Using Simplified Fully Convo
 * [References](#references)
 
 ## General Info
-- This project is aimed at creating a solution to tackling the problem of Low Light Photography Using Simplified Fully Convolutional Neural Networks. 
-- The Neural Network architecture is written in PyTorch and the application is deployed using Flask.
+- This project is aimed at creating a solution to tackling the problem of Low Light Photography Using Simplified Fully Convolutional Neural Networks
+- The Neural Network model architecture is written in PyTorch and the application is deployed using Flask
+- The model was trained using the [Sony Dataset](https://storage.googleapis.com/isl-datasets/SID/Sony.zip) with images of multiple exposures
 
 ## Packages Used
 - PyTorch

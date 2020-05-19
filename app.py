@@ -80,7 +80,14 @@ fully_conv_network.load_state_dict(torch.load('./tiny_final.pt',map_location= to
 @nocache
 def index():
 	if request.method == 'GET':
-		return render_template('file.html')	
+		return render_template('file.html')
+
+    # Uncomment below code in case you wish to delete all old images
+
+	# mydir="./static/"
+	# filelist = [ f for f in os.listdir(mydir) ]
+	# for f in filelist:
+	# 	os.remove(os.path.join(mydir, f))	
 
     # Get uploaded image
 	picture_path=request.files['fileToUpload']
