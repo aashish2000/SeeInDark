@@ -1,5 +1,5 @@
 # See In The Dark
-This project focuses on Low Light Photo Enhancement Using Simplified Fully Convolutional Neural Networks. This was attempted to produce a memory efficient model that can effectively run on edge devices without sacrificing image quality. 
+This project focuses on Low Light Photo Enhancement Using Simplified Fully Convolutional Neural Networks. This was attempted to produce a memory efficient model that can effectively run on edge devices and deliver an optimum level of image enhancement and noise reduction. 
 
 ## Table of contents
 * [General Info](#general-info)
