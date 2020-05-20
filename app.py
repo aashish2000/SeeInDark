@@ -1,26 +1,18 @@
 # Perform necessary imports
 
-from flask import Flask,render_template,session,redirect,url_for,request
+from flask import Flask,render_template,session,redirect,url_for,request, make_response
 import os
-import torch
 import requests
 import cv2
-
+import torch
 import numpy as np
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms, utils
-import numpy as np
-torch.set_printoptions(linewidth=120)
+from model import NNetwork
 
 # Ignore warnings
 import json
 import warnings
 warnings.filterwarnings("ignore")
 import time
-from flask import make_response
 from functools import wraps, update_wrapper
 from datetime import datetime
 
@@ -39,39 +31,6 @@ def nocache(view):
         
     return update_wrapper(no_cache, view)
 
-'''
-Defines Neural Network Architecture
-consisting of 2 convolutional layers and
-2 deconvolutional layers
-'''
-
-class NNetwork(nn.Module):
-    def __init__(self):
-        super(NNetwork,self).__init__()
-        
-        self.conv1 = nn.Conv2d(in_channels=3,out_channels=4,kernel_size=3,padding=0)#16
-        self.conv2 = nn.Conv2d(in_channels=4,out_channels=8,kernel_size=3,padding=0)
-        
-        self.deconv1 = nn.ConvTranspose2d(in_channels=8,out_channels=4,kernel_size=4)
-        self.deconv2 = nn.ConvTranspose2d(in_channels=4,out_channels=3,kernel_size=4)
-        
-    
-    def forward(self,t):
-        t = self.conv1(t)
-        t = F.relu(t)
-        t = F.max_pool2d(t,kernel_size=3, stride = 1)
-        
-        t = self.conv2(t)
-        t = F.relu(t)
-        
-        t = self.deconv1(t)
-        t = F.relu(t)
-
-        t = self.deconv2(t)
-        t = F.relu(t)
-        
-        return t
-
 # Load Saved Model 
 fully_conv_network = NNetwork().to('cpu')
 fully_conv_network.load_state_dict(torch.load('./tiny_final.pt',map_location= torch.device('cpu')))
@@ -84,10 +43,10 @@ def index():
 
     # Uncomment below code in case you wish to delete all old images
 
-	# mydir="./static/"
-	# filelist = [ f for f in os.listdir(mydir) ]
-	# for f in filelist:
-	# 	os.remove(os.path.join(mydir, f))	
+	mydir="./static/"
+	filelist = [ f for f in os.listdir(mydir) ]
+	for f in filelist:
+		os.remove(os.path.join(mydir, f))	
 
     # Get uploaded image
 	picture_path=request.files['fileToUpload']
