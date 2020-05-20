@@ -33,7 +33,7 @@ def nocache(view):
 
 # Load Saved Model 
 fully_conv_network = NNetwork().to('cpu')
-fully_conv_network.load_state_dict(torch.load('./tiny_final.pt',map_location= torch.device('cpu')))
+fully_conv_network.load_state_dict(torch.load('./saved_model.pt',map_location= torch.device('cpu')))
 
 @app.route('/', methods=['POST','GET'])
 @nocache
