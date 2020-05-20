@@ -41,21 +41,21 @@ def index():
 	if request.method == 'GET':
 		return render_template('file.html')
 
-    # Uncomment below code in case you wish to delete all old images
+	# Uncomment below code in case you wish to delete all old images
 
 	mydir="./static/"
 	filelist = [ f for f in os.listdir(mydir) ]
 	for f in filelist:
 		os.remove(os.path.join(mydir, f))	
 
-    # Get uploaded image
+	# Get uploaded image
 	picture_path=request.files['fileToUpload']
 	time_stamp = str(time.time()).replace('.','')
 
 	picture_path.save("./static/"+time_stamp+".jpg")
 	uploaded_image=cv2.imread("./static/"+time_stamp+".jpg")
 
-    # Resize image to dimensions (512,512) and switch channels
+	# Resize image to dimensions (512,512) and switch channels
 	input_image = np.array(uploaded_image)
 	height,width = input_image.shape[0],input_image.shape[1]
 	input_image = cv2.resize(input_image,(512,512))
@@ -64,11 +64,11 @@ def index():
 	dark_imgs=[]
 	dark_imgs.append(input_image)
 
-    # Pass Image as input to the Neural Network
+	# Pass Image as input to the Neural Network
 	out = fully_conv_network(torch.as_tensor(dark_imgs).float())
 	out = out.detach().cpu().numpy()
 
-    # Resize image to original dimensions
+	# Resize image to original dimensions
 	output_image = np.moveaxis(out[0], -1, 0)
 	output_image = np.moveaxis(output_image, -1, 0)
 	output_image = cv2.resize(output_image,(width,height))
