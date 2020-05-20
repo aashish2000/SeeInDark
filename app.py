@@ -41,18 +41,18 @@ def index():
 	if request.method == 'GET':
 		return render_template('file.html')
 
-	# Uncomment below code in case you wish to delete all old images
+	# Uncomment below code in case you wish to delete all old images after enhancememnt
 
-	mydir="./static/"
-	filelist = [ f for f in os.listdir(mydir) ]
-	for f in filelist:
-		os.remove(os.path.join(mydir, f))	
+	# mydir="./static/"
+	# filelist = [ f for f in os.listdir(mydir) ]
+	# for f in filelist:
+	# 	os.remove(os.path.join(mydir, f))	
 
 	# Get uploaded image
-	picture_path=request.files['fileToUpload']
+	get_picture=request.files['fileToUpload']
 	time_stamp = str(time.time()).replace('.','')
 
-	picture_path.save("./static/"+time_stamp+".jpg")
+	get_picture.save("./static/"+time_stamp+".jpg")
 	uploaded_image=cv2.imread("./static/"+time_stamp+".jpg")
 
 	# Resize image to dimensions (512,512) and switch channels
@@ -73,9 +73,12 @@ def index():
 	output_image = np.moveaxis(output_image, -1, 0)
 	output_image = cv2.resize(output_image,(width,height))
 
+	original_picture_path="./static/"+time_stamp+".jpg"
+	enhanced_picture_path="./static/"+time_stamp+"1.jpg"
+
 	cv2.imwrite("./static/"+time_stamp+"1.jpg",output_image)
 
-	return render_template("result.html",data={"ori":"./static/"+time_stamp+".jpg","pro":"./static/"+time_stamp+"1.jpg"})
+	return render_template("result.html",data={"ori":original_picture_path,"pro":enhanced_picture_path})
 
 
 @app.after_request
