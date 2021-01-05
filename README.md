@@ -6,7 +6,6 @@ This project focuses on Low Light Photo Enhancement Using Simplified Fully Convo
 * [Packages Used](#packages-used)
 * [Setup](#setup)
 * [Usage](#usage)
-* [Features](#features)
 * [Screenshots](#screenshots)
 * [References](#references)
 
